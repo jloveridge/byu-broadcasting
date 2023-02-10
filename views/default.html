@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sample Restaurant Finder</title>
+    </head>
+    <body>
+        <form action="/restaurant/findOpen">
+            <label for="datepicker">Date:</label><input id="datepicker" name="datepicker" type="datetime-local">
+            <button>Find Open Restaurants</button>
+        </form>
+        <ul id="results"></ul>
+        <script>
+            const form = document.querySelector('form');
+            const list = document.querySelector('ul');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(form);
+                const params = new URLSearchParams();
+
+                for (const [key, value] of formData.entries()) {
+                    params.append(key, value);
+                }
+
+                const response = await fetch(`${form.action}?${params.toString()}`);
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+                const items = await response.json();
+                list.innerHTML = '';
+                for ( const item of items ) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = item;
+                    list.appendChild(listItem);
+                }
+            });
+        </script>
+    </body>
+</html>
